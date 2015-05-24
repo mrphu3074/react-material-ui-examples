@@ -172,10 +172,9 @@ if (Meteor.isClient) {
             Em.on('addTaskButtonShow', function() {
                 self.setState({out: false});
             });
-
         },
 
-        getMeteorState: function () {
+        getInitialState: function () {
             return {
                 out: false
             };
@@ -313,9 +312,11 @@ if (Meteor.isClient) {
             this.setState({done: checked});
             Collection.Tasks.update({_id: this.state._id}, {$set: {done: checked}});
         },
-        _onSelect: function() {
-            var selected = !this.state.selected;
-            this.setState({selected: selected})
+        _onSelect: function(e) {
+            if( !$(e.target).is('input[type="checkbox"]') ) {
+                var selected = !this.state.selected;
+                this.setState({selected: selected})
+            }
         },
         _onEditTask: function() {
             Em.emit('editTask', this.state._id);
@@ -371,11 +372,11 @@ if (Meteor.isClient) {
                 actionsStyle['transform'] = "translate3d(0px, 0px, 0px)";
             }
             return (
-                <Paper style={taskStyle}>
+                <Paper onClick={this._onSelect} style={taskStyle}>
                     <div style={statusStyle}>
                         <Checkbox checked={this.state.done} onCheck={this._onCheck} />    
                     </div>
-                    <h3 onClick={this._onSelect} style={textStyle}>{this.state.text}</h3>
+                    <h3 style={textStyle}>{this.state.text}</h3>
                     <span style={ timeAgoStyle }>{this.timeAgo()}</span>
                     <div style={actionsStyle}>
                         <FlatButton label="Edit" onClick={this._onEditTask} rippleColor={Colors.cyan500} hoverColor={Colors.cyan500} style={ {height: "100%"} } />
